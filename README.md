@@ -1,2 +1,2 @@
-# advanced-programming-in-C-
+# advanced-programming-in-C++
 Advanced-programming-in-C++
