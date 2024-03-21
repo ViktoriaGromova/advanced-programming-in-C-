@@ -24,6 +24,7 @@ public:
     BigInteger operator-(const BigInteger &x);
     BigInteger abs() const;
     std::string toString();
+    bool isEqual(const BigInteger &x) const;
     void Norm();
-    bool isGreater(const BigInteger &x);
+    bool isGreater(const BigInteger &x) const ;
 };

@@ -179,7 +179,7 @@ std::string BigInteger::toString()
     return str;
 }       
 
-bool BigInteger::isGreater(const BigInteger &x){
+bool BigInteger::isGreater(const BigInteger &x) const{
 
     if (isNegative != x.isNegative)
     {
@@ -199,4 +199,39 @@ bool BigInteger::isGreater(const BigInteger &x){
         }
     }
     return false;
+}
+
+bool BigInteger::isEqual(const BigInteger &x) const
+{
+    return (x.Number == Number && x.isNegative == isNegative);
+}
+
+bool operator==(const BigInteger &x, const BigInteger &y)
+{
+    return x.isEqual(y);
+}
+
+bool operator!=(const BigInteger &x, const BigInteger &y)
+{
+    return !x.isEqual(y);
+}
+
+bool operator>(const BigInteger &x, const BigInteger &y)
+{
+    return x.isGreater(y);
+}
+
+bool operator<(const BigInteger &x, const BigInteger &y)
+{
+    return y.isGreater(x);
+}
+
+bool operator>=(const BigInteger &x, const BigInteger &y)
+{
+    return x == y || x > y;
+}
+
+bool operator<=(const BigInteger &x, const BigInteger &y)
+{
+    return x == y || x < y;
 }
