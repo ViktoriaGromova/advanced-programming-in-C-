@@ -7,7 +7,7 @@ BigInteger::BigInteger(long long int x)
 {
     isNegative = (x < 0);
     if (isNegative)
-    {
+    { 
         x *= -1;
     }
 
@@ -20,7 +20,7 @@ BigInteger::BigInteger(long long int x)
 
 BigInteger BigInteger::abs() const
 {
-    return BigInteger(true, this->Number);
+    return BigInteger(false, this->Number);
 }
 
 void BigInteger::Norm()
@@ -73,6 +73,8 @@ BigInteger &BigInteger::operator+=(const BigInteger &x)
         return *this;
     }
 
+
+    std::cout<<"here2";
     isNegative = !isNegative;
     std::vector<long long int> NewNumber = x.Number; 
     for (size_t i = 0; i < Number.size(); ++i)
@@ -80,13 +82,43 @@ BigInteger &BigInteger::operator+=(const BigInteger &x)
         NewNumber[i] -= Number[i];
     }
     Number = NewNumber;
+ 
     Norm();
     return *this;
 }
 
+BigInteger &BigInteger::operator++()
+{
+    return (*this) += 1;
+}
+
+BigInteger BigInteger::operator++(int)
+{
+    BigInteger copy_x = *this;
+    ++(*this);
+    return copy_x;
+}
+
+BigInteger &BigInteger::operator--()
+{
+    return (*this) -= 1;
+}
+
+BigInteger BigInteger::operator--(int)
+{
+    BigInteger copy_x = *this;
+    --(*this);
+    return copy_x;
+}
 
 BigInteger BigInteger::operator+(const BigInteger &x)
 {
+    BigInteger new_x = *this;
+    new_x += x;
+    return new_x;
+}
+
+BigInteger BigInteger::operator-(const BigInteger &x){
     BigInteger new_x = *this;
     new_x += x;
     return new_x;
@@ -100,6 +132,14 @@ BigInteger operator+(const BigInteger &x, const BigInteger &y) // x + y
     return new_x;
 }
 
+// global
+BigInteger operator-(const BigInteger &x, const BigInteger &y) // x - y
+{
+    BigInteger new_x = x;
+    new_x -= y;
+    return new_x;
+}
+
 BigInteger &BigInteger::operator=(const BigInteger &x) 
 {
     if (this == &x)
@@ -108,6 +148,13 @@ BigInteger &BigInteger::operator=(const BigInteger &x)
     }
     isNegative = x.isNegative;
     Number = x.Number;
+    return *this;
+}
+
+BigInteger &BigInteger::operator-=(const BigInteger &x)
+{
+    BigInteger inv_x(!x.isNegative, x.Number);
+    (*this) += inv_x;
     return *this;
 }
 
@@ -134,15 +181,20 @@ std::string BigInteger::toString()
 
 bool BigInteger::isGreater(const BigInteger &x){
 
-    if ((*this).Number.size() > x.Number.size()){
+    if (isNegative != x.isNegative)
+    {
+        return !isNegative;
+    }
+
+    if (Number.size() > x.Number.size()){
         return true;
     }
-    if((*this).Number.size() < x.Number.size()){
+    if(Number.size() < x.Number.size()){
         return false;
     }
 
-    for(int i = Number.size() - 1; i != 0; --i){
-        if ((*this).Number[i] > x.Number[i]){
+    for(int i = Number.size(); i != 0; --i){
+        if ((*this).Number[i-1] > x.Number[i-1]){
             return true;
         }
     }

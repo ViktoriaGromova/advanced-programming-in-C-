@@ -15,7 +15,13 @@ public:
     BigInteger() : isNegative(false), Number{0} {}
     BigInteger &operator=(const BigInteger &x);
     BigInteger &operator+=(const BigInteger &x);
+    BigInteger &operator-=(const BigInteger &x);
     BigInteger operator+(const BigInteger &x);
+    BigInteger& operator--();
+    BigInteger& operator++();
+    BigInteger operator++(int);
+    BigInteger operator--(int);
+    BigInteger operator-(const BigInteger &x);
     BigInteger abs() const;
     std::string toString();
     void Norm();
