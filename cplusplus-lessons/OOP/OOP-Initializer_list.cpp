@@ -1,8 +1,16 @@
 #include <iostream>
 
+// Cписки  инициализации  - часть определения
 class A{
-    A() = delete;
+    const int& a;
+    // A() = delete;
+public: 
+    // A(const int& a) a(a) {} // rvalue
 };
+
+// void f(){
+//     A a(5);
+// }
 
 class B{
  int x;
