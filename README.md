@@ -1,2 +1,3 @@
-# Disclaimer
-This is where I learn C++ on my own. This course is based on the MIPT course on advanced C++.
+# Advanced Programming in C++
+
+This repository was created for mastering advanced C++ features and learning various tools for working with it.
