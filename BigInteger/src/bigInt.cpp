@@ -1,4 +1,4 @@
-#include "bigInt.hpp"
+#include "../include/bigInt.hpp"
 #include <string>
 #include <iostream>
 

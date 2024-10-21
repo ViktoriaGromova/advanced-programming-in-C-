@@ -1,4 +1,4 @@
-#include "include/bigInt.hpp"
+#include "../include/bigInt.hpp"
 
 #include <gtest/gtest.h>
 
