@@ -2,11 +2,17 @@ cmake_minimum_required(VERSION 3.18)
 
 project(BigInteger)
 
+set(CMAKE_C_COMPILER "gcc")      
+set(CMAKE_CXX_COMPILER "g++")     
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(GTest REQUIRED)
+find_package(GTest HINTS /usr/local/lib/googletest/) #  hint abs_path to gtest
+
+#set(GTEST_ROOT "/usr/local/lib/googletest/")
+# find_package(GTest REQUIRED PATHS ${GTEST_ROOT} NO_DEFAULT_PATH)
 
 if(GTEST_FOUND)
     include_directories(${GTEST_INCLUDE_DIRS})
@@ -27,4 +33,5 @@ add_executable(MAIN main.cpp)
 target_link_libraries(MAIN BigInt)
 
 enable_testing()
-add_test(NAME bigIntTest COMMAND my_tests)
+
+add_test(NAME BasicAssertions COMMAND BigIntTest)

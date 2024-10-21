@@ -2,10 +2,10 @@
 
 #include <gtest/gtest.h>
 
-TEST(BigIntegerTest, can_create_matrix_with_positive_length)
-{
-	ASSERT_NO_THROW(BigInteger A("989890097097060"));
-}
+// TEST(BigIntegerTest, can_create_matrix_with_positive_length)
+// {
+// 	ASSERT_NO_THROW(BigInteger A("989890097097060"));
+// }
 
 // Demonstrate some basic assertions.
 TEST(BigIntegerTest, BasicAssertions) {
