@@ -14,9 +14,11 @@ constexpr int8_t CHANKSSIZE = 9;
 class BigInteger
 {
 private:
+    static const int ZERO = 0;
+
     bool isNegative = false; // sign: true - "-", false - "+"
     std::vector<uint32_t> number;
-    static const int ZERO = 0;
+
     bool checkTheValueContainsOnlyDigit(const std::string &value) const;
     std::string separationIntoSignedAndNumericPartsAndDefinitionSign(const std::string &value, bool &isNegative);
     BigInteger abs() const { return BigInteger(false, this->number);
