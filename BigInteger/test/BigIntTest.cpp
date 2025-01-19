@@ -13,10 +13,10 @@ TEST(BigIntegerTest, BasicAssertions) {
   EXPECT_EQ(7 * 6, 42);
 }
 
- TEST(BigIntegerTest, CreatingObjectFromAnInputString) 
-{
-    BigInteger A("989890097097060");
-    A.
-    EXPECT_EQ(, "0");
-    EXPECT_EQ(bigInt.toString(), "0");
-}
+//  TEST(BigIntegerTest, CreatingObjectFromAnInputString) 
+// {
+//     BigInteger A("989890097097060");
+//     A.
+//     EXPECT_EQ(, "0");
+//     EXPECT_EQ(bigInt.toString(), "0");
+// }
