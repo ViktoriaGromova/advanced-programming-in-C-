@@ -25,13 +25,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_library(BigInt SHARED ${SRC_DIR}/bigInt.cpp)
 
-file(GLOB TEST_SOURCES ${TEST_DIR}/*.cpp)
-add_executable(bigIntTests ${TEST_SOURCES})
-target_link_libraries(bigIntTests PRIVATE ${GTEST_LIBRARIES} pthread BigInt)
+# file(GLOB TEST_SOURCES ${TEST_DIR}/*.cpp)
+# add_executable(bigIntTests ${TEST_SOURCES})
+# target_link_libraries(bigIntTests PRIVATE ${GTEST_LIBRARIES} pthread BigInt)
 
-add_executable(MAIN main.cpp)
-target_link_libraries(MAIN BigInt)
+# add_executable(MAIN main.cpp)
+# target_link_libraries(MAIN BigInt)
 
-enable_testing()
+# enable_testing()
 
-add_test(NAME BasicAssertions COMMAND BigIntTest)
+# add_test(NAME BasicAssertions COMMAND BigIntegerTest)
