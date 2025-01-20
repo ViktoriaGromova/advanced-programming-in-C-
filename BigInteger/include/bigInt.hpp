@@ -9,7 +9,7 @@
 #include <vector>
 
 constexpr int32_t BASE = 1e9;
-constexpr int8_t CHANKSSIZE = 9;
+constexpr int8_t CHANKSIZE = 9;
 
 class BigInteger {
 public:
@@ -22,7 +22,7 @@ public:
 
 private:
     Sign sign_value;
-    std::vector<uint32_t> number;
+    std::vector<uint32_t> value;
 
-    Sign sign(int32_t value);
+    Sign sign(int32_t value) const;
 };
