@@ -1,1 +1,6 @@
 .vscode
+
+# Build folders
+build*/
+_build*/
+cmake-build*/

@@ -2,60 +2,42 @@
 #include <string>
 #include <iostream>
 
-std::string BigInteger::separationIntoSignedAndNumericPartsAndDefinitionSign(const std::string &value, bool &isNegative)
+enum class BigInteger::Sign
 {
-    if (value[0] == '-' || value[0] == '+')
-    {
-        isNegative = (value[0] == '-');
-        return value.substr(1);
-    }
-    return value;
-}
+    POSITIVE = 1,
+    NEGATIVE = -1,
+    ZERO = 0
+};
 
-bool BigInteger::checkTheValueContainsOnlyDigit(const std::string &value) const 
-{
-    return std::all_of(value.begin(), value.end(), ::isdigit);
-}
-
-BigInteger::BigInteger(const int32_t& value)
-{
+BigInteger::Sign BigInteger::sign(const int32_t value) {
     if (value == 0)
-        BigInteger();
+    {
+        return BigInteger::Sign::ZERO;
+    }
+    if (value < 0)
+        return BigInteger::Sign::NEGATIVE;
+    return BigInteger::Sign::POSITIVE;
+}
+
+BigInteger::BigInteger() : sign_value(BigInteger::Sign::ZERO) {}
+
+BigInteger::BigInteger(const int32_t &value)
+{
+    sign_value = sign(value);
+    if (sign_value == BigInteger::Sign::ZERO)
+        return;
     else
     {
-        isNegative = value < 0;
-        uint32_t absValue = std::abs(value);
-        number.push_back(absValue);
-    }
-}
-
-BigInteger::BigInteger(const char* val)
-{
-    std::string value = std::string(val);
-    if (value.empty())
-        BigInteger();
-
-    separationIntoSignedAndNumericPartsAndDefinitionSign(value, isNegative);
-
-    if (checkTheValueContainsOnlyDigit(value))
-    {
-        size_t i = value.size() - 1;
-        while (i > 0)
+        uint32_t absValue = value;
+        if (sign_value == BigInteger::Sign::NEGATIVE)
         {
-            int32_t chank = 0;
-            if (i >= CHANKSSIZE)
-            {
-                chank = std::stoi(value.substr(i - CHANKSSIZE + 1, i));
-                i -= CHANKSSIZE;
-            }
-            else
-            {
-                chank = std::stoi(value.substr(0, i));
-                i = 0; // i -= i is 0
-            }
-            number.push_back(chank);
+            absValue = -value;
+        }
+
+        while (absValue > 0)
+        {
+            number.push_back(absValue % BASE);
+            absValue /= BASE;
         }
     }
-    else
-        throw std::invalid_argument("The number was entered incorrectly");
 }

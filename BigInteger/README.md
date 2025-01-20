@@ -1,6 +1,8 @@
 # BigIneger library
 __Dependencies:__
 * git 
+* GTest
+* 
 
 ## Build BigInteger
 ```bash
