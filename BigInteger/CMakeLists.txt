@@ -12,8 +12,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_library(foo ${FOO_SRC})
-add_library(MyOrg::foo ALIAS foo)
+set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+add_library(BigIntLib SHARED ${SRC_DIR}/bigInt.cpp)
+
+target_include_directories(BigIntLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+add_library(BigInt ALIAS BigIntLib)
 
 if(ENABLE_TESTS)
     enable_testing()
