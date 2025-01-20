@@ -1,25 +1,24 @@
 #pragma once
 
-#include <vector>
-#include <ostream>
-#include <string>
+#include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <cstdlib>
-#include <cctype>
-#include <algorithm>
+#include <ostream>
+#include <string>
+#include <vector>
 
 constexpr int32_t BASE = 1e9;
-constexpr int8_t CHANKSSIZE = 9; 
+constexpr int8_t CHANKSSIZE = 9;
 
-class BigInteger
-{
+class BigInteger {
 public:
     enum class Sign;
 
     explicit BigInteger();
     BigInteger(const int32_t& number);
-    //BigInteger(const std::string& number);
-   // explicit BigInteger(bool isNegative, std::vector<uint32_t> number);
+    BigInteger(const std::string& number);
+    // explicit BigInteger(bool isNegative, std::vector<uint32_t> number);
 
 private:
     Sign sign_value;
