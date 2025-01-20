@@ -1,7 +1,8 @@
-#include <iostream>
 #include <bigInt.hpp>
+#include <iostream>
 
-int main(){
-    BigInteger A(); 
+int main()
+{
+    BigInteger A();
     return 0;
 }
