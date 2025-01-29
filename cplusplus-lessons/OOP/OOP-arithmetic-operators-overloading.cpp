@@ -45,7 +45,7 @@ public:
     Complex operator++(int)
     {
         Complex new_c = *this;
-        ++ (*this);
+        ++(*this);
         return new_c;
     }
 };
