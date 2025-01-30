@@ -21,8 +21,10 @@ public:
     BigInteger(BigInteger::Sign sign);
     BigInteger(BigInteger::Sign sign, std::vector<uint32_t> number);
     BigInteger(const BigInteger& number);
-    
-    BigInteger& operator +=(const BigInteger& number);
+
+    BigInteger& operator+=(const BigInteger& number);
+    BigInteger& operator++();
+    BigInteger BigInteger::operator++(int);
 
 private:
     Sign sign_value;

@@ -102,4 +102,39 @@ BigInteger::BigInteger(BigInteger::Sign sign, std::vector<uint32_t> number)
     value = number;
 }
 
-std::String BigInteger::toString(){}
+BigInteger::BigInteger(const BigInteger& number)
+{
+    this->sign_value = number.sign_value;
+    this->value = number.value;
+}
+
+BigInteger& BigInteger::operator+=(const BigInteger& number)
+{
+    if (number.sign_value == BigInteger::Sign::ZERO) {
+        return *this;
+    }
+
+    if (sign_value == BigInteger::Sign::ZERO) {
+        *this = number;
+        return *this;
+    }
+}
+
+BigInteger& BigInteger::operator++()
+{
+    return *this += BigInteger(1);
+}
+
+BigInteger BigInteger::operator++(int)
+{
+    BigInteger new_big_int = *this;
+    ++new_big_int;
+    return new_big_int;
+}
+
+BigInteger operator+(const BigInteger& number_1, const BigInteger& number_2)
+{
+    BigInteger new_number = number_1;
+    new_number += number_2;
+    return new_number;
+}

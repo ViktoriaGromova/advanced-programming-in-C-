@@ -23,7 +23,6 @@ public:
         memset(str, ch, size);
     }
 
-
     // Инициалиация с помощью initializer_list. Была введена с C++11
     String(const std::initializer_list<char>& lst){
         size = lst.size();
