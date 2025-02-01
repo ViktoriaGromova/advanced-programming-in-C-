@@ -22,14 +22,22 @@ public:
     BigInteger(BigInteger::Sign sign, std::vector<uint32_t> number);
     BigInteger(const BigInteger& number);
 
+    bool is_equal(const BigInteger& number) const;
+    bool is_greater_than(const BigInteger& number) const;
     BigInteger& operator+=(const BigInteger& number);
+    BigInteger& operator-=(const BigInteger& number);
+    BigInteger& operator=(const BigInteger& number);
     BigInteger& operator++();
-    BigInteger BigInteger::operator++(int);
+    BigInteger operator++(int);
+    BigInteger& operator--();
+    BigInteger operator--(int);
 
 private:
     Sign sign_value;
     std::vector<uint32_t> value;
 
     Sign sign(int32_t value) const;
+    void abs_sum(const BigInteger& number);
+    void abs_sub(const BigInteger& number);
     bool isNotZeroVector(const std::vector<uint32_t>& number) const;
 };

@@ -108,6 +108,91 @@ BigInteger::BigInteger(const BigInteger& number)
     this->value = number.value;
 }
 
+void BigInteger::abs_sum(const BigInteger& number)
+{
+    const size_t max_size = number.value.size() > value.size() ? number.value.size() : value.size();
+
+    BigInteger new_number = number;
+    if (max_size != value.size()) {
+        value.resize(max_size, 0);
+    }
+    else{
+        new_number.value.resize(max_size, 0);
+    }
+
+    int32_t carry = 0;
+    for (size_t i = 0; i < value.size(); ++i) {
+        int64_t tem_sum = value[i] + new_number.value[i] + carry;
+        value[i] = tem_sum % BASE;
+        carry = tem_sum / BASE;
+    }
+
+    if (carry != 0) {
+        value.push_back(carry);
+    }
+}
+
+void BigInteger::abs_sub(const BigInteger& number)
+{
+    if (number.value == value) {
+        *this = BigInteger();
+        return;
+    }
+
+    const size_t max_size = number.value.size() > value.size() ? number.value.size() : value.size();
+
+}
+
+bool BigInteger::is_greater_than(const BigInteger& number) const
+{
+    if (sign_value == BigInteger::Sign::ZERO && number.sign_value == BigInteger::Sign::ZERO) {
+        return false;
+    }
+
+    if (number.sign_value != sign_value) {
+        if (sign_value == BigInteger::Sign::NEGATIVE) {
+            return false;
+        }
+
+        if (sign_value == BigInteger::Sign::ZERO && number.sign_value == BigInteger::Sign::POSITIVE) {
+            return false;
+        }
+    } else {
+        if (number.sign_value == BigInteger::Sign::POSITIVE) {
+            if (number.value.size() > value.size()) {
+                return false;
+            } else {
+                if (number.value.size() < value.size()) {
+                    return true;
+                }
+            }
+
+            for (size_t i = number.value.size() - 1; i != -1; --i) {
+                if (number.value[i] > value[i]) {
+                    return false;
+                }
+            }
+        } else {
+            if (number.sign_value == BigInteger::Sign::NEGATIVE) {
+                if (number.value.size() < value.size()) {
+                    return false;
+                } else {
+                    if (number.value.size() > value.size()) {
+                        return true;
+                    }
+                }
+
+                for (size_t i = number.value.size() - 1; i != -1; --i) {
+                    if (number.value[i] < value[i]) {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+    return true;
+}
+
 BigInteger& BigInteger::operator+=(const BigInteger& number)
 {
     if (number.sign_value == BigInteger::Sign::ZERO) {
@@ -118,6 +203,55 @@ BigInteger& BigInteger::operator+=(const BigInteger& number)
         *this = number;
         return *this;
     }
+
+    if (sign_value == number.sign_value) {
+        abs_sum(number);
+    } else {
+        BigInteger abs_this_big_int(BigInteger::Sign::POSITIVE, value);
+        if (!abs_this_big_int.is_greater_than(BigInteger(BigInteger::Sign::POSITIVE, number.value))) {
+            sign_value = number.sign_value;
+        }
+        abs_sub(number);
+    }
+    return *this;
+}
+
+BigInteger& BigInteger::operator-=(const BigInteger& number)
+{
+    if (number.sign_value == BigInteger::Sign::ZERO) {
+        return *this;
+    }
+
+    if (sign_value == BigInteger::Sign::ZERO) {
+        *this = number;
+        if (number.sign_value == BigInteger::Sign::POSITIVE) {
+            sign_value = BigInteger::Sign::NEGATIVE;
+        } else {
+            if (number.sign_value == BigInteger::Sign::NEGATIVE) {
+                sign_value = BigInteger::Sign::POSITIVE;
+            }
+        }
+        return *this;
+    }
+
+    if (sign_value == number.sign_value) {
+        abs_sum(number);
+    } else {
+        BigInteger abs_this_big_int(BigInteger::Sign::POSITIVE, value);
+        if (!abs_this_big_int.is_greater_than(BigInteger(BigInteger::Sign::POSITIVE, number.value))) {
+            sign_value = number.sign_value;
+        }
+        abs_sub(number);
+    }
+    return *this;
+}
+
+BigInteger& BigInteger::operator=(const BigInteger& number)
+{
+    if (this == &number) {
+        return *this;
+    }
+    BigInteger(number);
 }
 
 BigInteger& BigInteger::operator++()
@@ -132,9 +266,64 @@ BigInteger BigInteger::operator++(int)
     return new_big_int;
 }
 
+BigInteger& BigInteger::operator--(){
+    return *this -= BigInteger(1);
+}
+
+BigInteger BigInteger::operator--(int){
+    BigInteger new_big_int = *this;
+    --new_big_int;
+    return new_big_int;
+}
+
+bool BigInteger::is_equal(const BigInteger& number) const
+{
+    if (sign_value == number.sign_value && value == number.value) {
+        return true;
+    }
+    return false;
+}
+
+bool operator==(const BigInteger& number_1, const BigInteger& number_2)
+{
+    return number_1.is_equal(number_2);
+}
+
+bool operator!=(const BigInteger& number_1, const BigInteger& number_2)
+{
+    return !(number_1 == number_2);
+}
+
+bool operator>(const BigInteger& number_1, const BigInteger& number_2)
+{
+    return number_1.is_greater_than(number_2);
+}
+
+bool operator>=(const BigInteger& number_1, const BigInteger& number_2)
+{
+    return number_1 > number_2 || number_1 == number_2;
+}
+
+bool operator<(const BigInteger& number_1, const BigInteger& number_2)
+{
+    return !(number_1 >= number_2);
+}
+
+bool operator<=(const BigInteger& number_1, const BigInteger& number_2)
+{
+    return !(number_1 > number_2);
+}
+
 BigInteger operator+(const BigInteger& number_1, const BigInteger& number_2)
 {
     BigInteger new_number = number_1;
     new_number += number_2;
+    return new_number;
+}
+
+BigInteger operator-(const BigInteger& number_1, const BigInteger& number_2)
+{
+    BigInteger new_number = number_1;
+    new_number -= number_2;
     return new_number;
 }
