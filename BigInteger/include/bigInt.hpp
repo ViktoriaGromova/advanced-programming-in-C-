@@ -1,10 +1,11 @@
 #pragma once
 
-#include <algorithm>
 #include <cctype>
 #include <cmath>
+#include <iomanip>
 #include <cstdlib>
 #include <ostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -31,6 +32,7 @@ public:
     BigInteger operator++(int);
     BigInteger& operator--();
     BigInteger operator--(int);
+    std::string toString() const;
 
 private:
     Sign sign_value;

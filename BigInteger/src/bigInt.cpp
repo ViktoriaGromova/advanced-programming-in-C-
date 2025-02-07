@@ -1,6 +1,7 @@
 #include "../include/bigInt.hpp"
 
 #include <iostream>
+
 #include <string>
 
 struct IncorrectValue { };
@@ -139,8 +140,55 @@ void BigInteger::abs_sub(const BigInteger& number)
         return;
     }
 
-    const size_t max_size = number.value.size() > value.size() ? number.value.size() : value.size();
+    // We assume that this object is larger than the input object.
+    BigInteger abs_greater_big_int(BigInteger::Sign::POSITIVE, value);
+    BigInteger abs_big_int(BigInteger::Sign::POSITIVE, number.value);
+    if (abs_big_int.is_greater_than(abs_greater_big_int)) {
+        BigInteger temp = abs_greater_big_int;
+        abs_greater_big_int = abs_big_int;
+        abs_big_int = temp;
+    }
 
+    const size_t min_size = abs_big_int.value.size();
+    const size_t max_size = abs_big_int.value.size();
+
+    // The result is written in a larger numbe
+    int32_t carry = 0; 
+    for (int i = 0; i < min_size; ++i){
+        if(carry){
+            if (abs_greater_big_int.value[i] - carry < 0){
+                abs_greater_big_int.value[i] += BASE;
+                carry = 1;
+            }
+            else{
+                carry = 0;
+            }
+        }
+
+        if(abs_greater_big_int.value[i] < abs_big_int.value[i])
+        {   
+            carry = 1;
+            abs_greater_big_int.value[i] += BASE;
+        }
+        abs_greater_big_int.value[i] -= abs_big_int.value[i];
+
+    }
+
+    // number remainder processing
+    size_t remainder = min_size;
+    while(carry){
+        if (abs_greater_big_int.value[remainder] - carry < 0){
+            ++remainder;
+        }
+        else{
+            abs_greater_big_int.value[remainder] -= carry;
+            carry = 0;
+        }
+    }
+
+    while (abs_greater_big_int.value[abs_greater_big_int.value.size() - 1] == 0){
+        value.pop_back();
+    }
 }
 
 bool BigInteger::is_greater_than(const BigInteger& number) const
@@ -251,7 +299,8 @@ BigInteger& BigInteger::operator=(const BigInteger& number)
     if (this == &number) {
         return *this;
     }
-    BigInteger(number);
+    this->value = number.value;
+    this->sign_value = number.sign_value;
 }
 
 BigInteger& BigInteger::operator++()
@@ -326,4 +375,24 @@ BigInteger operator-(const BigInteger& number_1, const BigInteger& number_2)
     BigInteger new_number = number_1;
     new_number -= number_2;
     return new_number;
+}
+
+std::string BigInteger::toString() const
+{
+    std::ostringstream out;
+
+    if (sign_value == BigInteger::Sign::ZERO) {
+        out << 0;
+        return out.str();
+    }
+
+    if (sign_value == BigInteger::Sign::NEGATIVE) {
+        out << "-";
+    }
+
+    for (size_t i = value.size() - 2; i != -1; --i) {
+        out << std::setw(BASE) << std::setfill('0') << value[i]; 
+    }
+
+    return out.str();
 }
