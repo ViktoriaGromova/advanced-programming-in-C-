@@ -49,11 +49,11 @@ BigInteger::BigInteger(const std::string& number)
     size_t size_not_numeric_symbols = 0;
     if (number[0] == '-') {
         sign_value = BigInteger::Sign::NEGATIVE;
-        size_not_numeric_symbols = 1;
+        ++size_not_numeric_symbols;
     } else {
         sign_value = BigInteger::Sign::POSITIVE;
         if (number[0] == '+') {
-            size_not_numeric_symbols = 1;
+            ++size_not_numeric_symbols;
         }
     }
 
@@ -66,7 +66,7 @@ BigInteger::BigInteger(const std::string& number)
         return;
     }
 
-    value.resize((size_not_numeric_symbols + CHANKSIZE - 1) / CHANKSIZE);
+    value.resize((number.size() - size_not_numeric_symbols + CHANKSIZE - 1) / CHANKSIZE);
 
     for (size_t i = number.size(); i > size_not_numeric_symbols; --i) {
         value[(i - size_not_numeric_symbols - 1) / CHANKSIZE] =
@@ -140,17 +140,25 @@ void BigInteger::abs_sub(const BigInteger& number)
         return;
     }
 
+    std::cout << 11 << std::endl;
     // We assume that this object is larger than the input object.
     BigInteger abs_greater_big_int(BigInteger::Sign::POSITIVE, value);
+    std::cout << abs_greater_big_int.toString() << "- abs_greater_big_int.toString() "<< std::endl;
     BigInteger abs_big_int(BigInteger::Sign::POSITIVE, number.value);
+    std::cout << abs_big_int.toString() << "- abs_greater_big_int.toString() "<< std::endl;
+    std::cout << 11 << std::endl;
     if (abs_big_int.is_greater_than(abs_greater_big_int)) {
         BigInteger temp = abs_greater_big_int;
         abs_greater_big_int = abs_big_int;
         abs_big_int = temp;
+        std::cout << 1111490 << std::endl;
     }
 
+    std::cout << abs_greater_big_int.toString() << "- abs_greater_big_int.toString() "<< std::endl;
+    std::cout << abs_big_int.toString() << "- abs_greater_big_int.toString() "<< std::endl;
+
     const size_t min_size = abs_big_int.value.size();
-    const size_t max_size = abs_big_int.value.size();
+    const size_t max_size = abs_greater_big_int.value.size();
 
     // The result is written in a larger numbe
     int32_t carry = 0; 
@@ -187,8 +195,10 @@ void BigInteger::abs_sub(const BigInteger& number)
     }
 
     while (abs_greater_big_int.value[abs_greater_big_int.value.size() - 1] == 0){
-        value.pop_back();
+        abs_greater_big_int.value.pop_back();
     }
+
+    value = abs_greater_big_int.value;
 }
 
 bool BigInteger::is_greater_than(const BigInteger& number) const
@@ -283,13 +293,13 @@ BigInteger& BigInteger::operator-=(const BigInteger& number)
     }
 
     if (sign_value == number.sign_value) {
-        abs_sum(number);
+        abs_sub(number);
     } else {
         BigInteger abs_this_big_int(BigInteger::Sign::POSITIVE, value);
         if (!abs_this_big_int.is_greater_than(BigInteger(BigInteger::Sign::POSITIVE, number.value))) {
             sign_value = number.sign_value;
         }
-        abs_sub(number);
+        abs_sum(number);
     }
     return *this;
 }
@@ -390,8 +400,9 @@ std::string BigInteger::toString() const
         out << "-";
     }
 
-    for (size_t i = value.size() - 2; i != -1; --i) {
-        out << std::setw(BASE) << std::setfill('0') << value[i]; 
+    out << value.back();
+    for (size_t i = value.size() - 1; i > 0; --i) {
+        out << std::setw(CHANKSIZE) << std::setfill('0') << value[i - 1];
     }
 
     return out.str();
