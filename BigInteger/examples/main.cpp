@@ -3,8 +3,11 @@
 
 int main()
 {
-    BigInteger A();
-    BigInteger B(std::string("000102321342"));
-    BigInteger C(123241532);
+    BigInteger A;
+    BigInteger B(std::string("100010232100853342"));
+    BigInteger C(-12324132);
+    C-=B ;
+
+    std::cout << C.toString() << '\n';
     return 0;
 }
