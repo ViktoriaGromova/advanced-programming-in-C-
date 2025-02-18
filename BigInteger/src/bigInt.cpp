@@ -1,10 +1,10 @@
 #include "../include/bigInt.hpp"
 
 #include <iostream>
-
 #include <string>
 
 struct IncorrectValue { };
+struct DivisionByZero { };
 
 enum class BigInteger::Sign { POSITIVE = 1, NEGATIVE = -1, ZERO = 0 };
 
@@ -95,7 +95,8 @@ bool BigInteger::isNotZeroVector(const std::vector<uint32_t>& number) const
 
 BigInteger::BigInteger(BigInteger::Sign sign, std::vector<uint32_t> number)
 {
-    if ((sign == BigInteger::Sign::ZERO && (number.size() != 1 && !isNotZeroVector(number))) || (sign == BigInteger::Sign::ZERO && isNotZeroVector(number))) {
+    if ((sign == BigInteger::Sign::ZERO && (number.size() != 1 && !isNotZeroVector(number))) ||
+        (sign == BigInteger::Sign::ZERO && isNotZeroVector(number))) {
         throw IncorrectValue();
     }
     // TODO: Make a function that removes extra zeros if they are at the beginning
@@ -116,8 +117,7 @@ void BigInteger::abs_sum(const BigInteger& number)
     BigInteger new_number = number;
     if (max_size != value.size()) {
         value.resize(max_size, 0);
-    }
-    else{
+    } else {
         new_number.value.resize(max_size, 0);
     }
 
@@ -140,61 +140,49 @@ void BigInteger::abs_sub(const BigInteger& number)
         return;
     }
 
-    std::cout << 11 << std::endl;
     // We assume that this object is larger than the input object.
     BigInteger abs_greater_big_int(BigInteger::Sign::POSITIVE, value);
-    std::cout << abs_greater_big_int.toString() << "- abs_greater_big_int.toString() "<< std::endl;
     BigInteger abs_big_int(BigInteger::Sign::POSITIVE, number.value);
-    std::cout << abs_big_int.toString() << "- abs_greater_big_int.toString() "<< std::endl;
-    std::cout << 11 << std::endl;
     if (abs_big_int.is_greater_than(abs_greater_big_int)) {
         BigInteger temp = abs_greater_big_int;
         abs_greater_big_int = abs_big_int;
         abs_big_int = temp;
-        std::cout << 1111490 << std::endl;
     }
-
-    std::cout << abs_greater_big_int.toString() << "- abs_greater_big_int.toString() "<< std::endl;
-    std::cout << abs_big_int.toString() << "- abs_greater_big_int.toString() "<< std::endl;
 
     const size_t min_size = abs_big_int.value.size();
     const size_t max_size = abs_greater_big_int.value.size();
 
     // The result is written in a larger numbe
-    int32_t carry = 0; 
-    for (int i = 0; i < min_size; ++i){
-        if(carry){
-            if (abs_greater_big_int.value[i] - carry < 0){
+    int32_t carry = 0;
+    for (int i = 0; i < min_size; ++i) {
+        if (carry) {
+            if (abs_greater_big_int.value[i] - carry < 0) {
                 abs_greater_big_int.value[i] += BASE;
                 carry = 1;
-            }
-            else{
+            } else {
                 carry = 0;
             }
         }
 
-        if(abs_greater_big_int.value[i] < abs_big_int.value[i])
-        {   
+        if (abs_greater_big_int.value[i] < abs_big_int.value[i]) {
             carry = 1;
             abs_greater_big_int.value[i] += BASE;
         }
         abs_greater_big_int.value[i] -= abs_big_int.value[i];
-
     }
 
     // number remainder processing
     size_t remainder = min_size;
-    while(carry){
-        if (abs_greater_big_int.value[remainder] - carry < 0){
+    while (carry) {
+        if (abs_greater_big_int.value[remainder] - carry < 0) {
             ++remainder;
-        }
-        else{
+        } else {
             abs_greater_big_int.value[remainder] -= carry;
             carry = 0;
         }
     }
 
-    while (abs_greater_big_int.value[abs_greater_big_int.value.size() - 1] == 0){
+    while (abs_greater_big_int.value[abs_greater_big_int.value.size() - 1] == 0) {
         abs_greater_big_int.value.pop_back();
     }
 
@@ -304,6 +292,42 @@ BigInteger& BigInteger::operator-=(const BigInteger& number)
     return *this;
 }
 
+BigInteger& BigInteger::operator*=(const BigInteger& number)
+{
+    if (number.sign_value == BigInteger::Sign::ZERO || sign_value == BigInteger::Sign::ZERO) {
+        return *this;
+    }
+
+    sign_value = number.sign_value != sign_value ? BigInteger::Sign::NEGATIVE : BigInteger::Sign::POSITIVE;
+
+    std::vector<uint32_t> res(number.value.size() + value.size() - 1, 0);
+    for (size_t i = 0; i < number.value.size(); ++i) {
+        int32_t carry = 0;
+        for (size_t j = 0; j < value.size(); ++j) {
+            uint32_t temp = res[i + j] + number.value[i] * value[j] + carry;
+            res[i + j] = temp % BASE;
+            carry = temp / BASE;
+        }
+
+        size_t m = value.size();
+        while (carry) {
+            res[m + i] = carry % BASE;
+            carry /= BASE;
+            ++m;
+        }
+    }
+
+    value = res;
+    return *this;
+}
+
+BigInteger operator*(const BigInteger& number_1, const BigInteger& number_2)
+{
+    BigInteger new_number = number_1;
+    new_number *= number_2;
+    return new_number;
+}
+
 BigInteger& BigInteger::operator=(const BigInteger& number)
 {
     if (this == &number) {
@@ -325,11 +349,13 @@ BigInteger BigInteger::operator++(int)
     return new_big_int;
 }
 
-BigInteger& BigInteger::operator--(){
+BigInteger& BigInteger::operator--()
+{
     return *this -= BigInteger(1);
 }
 
-BigInteger BigInteger::operator--(int){
+BigInteger BigInteger::operator--(int)
+{
     BigInteger new_big_int = *this;
     --new_big_int;
     return new_big_int;
@@ -373,6 +399,35 @@ bool operator<=(const BigInteger& number_1, const BigInteger& number_2)
     return !(number_1 > number_2);
 }
 
+BigInteger& BigInteger::operator/=(const BigInteger& number)
+{
+    if (sign_value == BigInteger::Sign::ZERO) {
+        return *this;
+    }
+
+    if (number.sign_value == BigInteger::Sign::ZERO) {
+        throw DivisionByZero();
+    }
+
+    if (number.value.size() >= value.size()) {
+        *this = BigInteger();
+        return *this;
+    }
+
+    sign_value = number.sign_value != sign_value ? BigInteger::Sign::NEGATIVE : BigInteger::Sign::POSITIVE;
+
+    std::vector<uint32_t> res(number.value.size() - value.size() + 1, 0);
+    BigInteger res_del(sign_value, res);
+    for (size_t i = res.size() - 1; i > 0; --i) {
+        while (number * res_del <= *this) {
+            ++res_del.value[i];
+        }
+    }
+
+    value = res_del.value;
+    return *this;
+}
+
 BigInteger operator+(const BigInteger& number_1, const BigInteger& number_2)
 {
     BigInteger new_number = number_1;
@@ -384,6 +439,13 @@ BigInteger operator-(const BigInteger& number_1, const BigInteger& number_2)
 {
     BigInteger new_number = number_1;
     new_number -= number_2;
+    return new_number;
+}
+
+BigInteger operator/(const BigInteger& number_1, const BigInteger& number_2)
+{
+    BigInteger new_number = number_1;
+    new_number /= number_2;
     return new_number;
 }
 

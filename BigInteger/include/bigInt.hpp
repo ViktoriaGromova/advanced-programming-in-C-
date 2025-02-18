@@ -27,6 +27,8 @@ public:
     bool is_greater_than(const BigInteger& number) const;
     BigInteger& operator+=(const BigInteger& number);
     BigInteger& operator-=(const BigInteger& number);
+    BigInteger& operator*=(const BigInteger& number);
+    BigInteger& operator/=(const BigInteger& number);
     BigInteger& operator=(const BigInteger& number);
     BigInteger& operator++();
     BigInteger operator++(int);
