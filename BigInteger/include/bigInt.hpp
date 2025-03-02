@@ -22,6 +22,8 @@ public:
     BigInteger(BigInteger::Sign sign);
     BigInteger(BigInteger::Sign sign, std::vector<uint32_t> number);
     BigInteger(const BigInteger& number);
+    explicit operator int() const; 
+    explicit operator bool() const; 
 
     bool is_equal(const BigInteger& number) const;
     bool is_greater_than(const BigInteger& number) const;
@@ -29,6 +31,7 @@ public:
     BigInteger& operator-=(const BigInteger& number);
     BigInteger& operator*=(const BigInteger& number);
     BigInteger& operator/=(const BigInteger& number);
+    BigInteger& operator%=(const BigInteger& number);
     BigInteger& operator=(const BigInteger& number);
     BigInteger& operator++();
     BigInteger operator++(int);
@@ -36,6 +39,7 @@ public:
     BigInteger operator--(int);
     std::string toString() const;
 
+    friend std::istream &operator>>(std::istream &in, BigInteger &number);
 private:
     Sign sign_value;
     std::vector<uint32_t> value;
