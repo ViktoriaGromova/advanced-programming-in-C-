@@ -5,6 +5,7 @@
 
 struct IncorrectValue { };
 struct DivisionByZero { };
+struct UnsupportedValue { };
 
 enum class BigInteger::Sign { POSITIVE = 1, NEGATIVE = -1, ZERO = 0 };
 
@@ -428,6 +429,14 @@ BigInteger& BigInteger::operator/=(const BigInteger& number)
     return *this;
 }
 
+BigInteger& BigInteger::operator%=(const BigInteger& number)
+{
+    BigInteger temp = *this;
+    temp /= number;
+    temp *= number;
+    return *this -= temp;
+}
+
 BigInteger operator+(const BigInteger& number_1, const BigInteger& number_2)
 {
     BigInteger new_number = number_1;
@@ -446,6 +455,12 @@ BigInteger operator/(const BigInteger& number_1, const BigInteger& number_2)
 {
     BigInteger new_number = number_1;
     new_number /= number_2;
+    return new_number;
+}
+
+BigInteger operator%(const BigInteger& number_1, const BigInteger& number_2){
+    BigInteger new_number = number_1;
+    new_number %= number_2;
     return new_number;
 }
 
@@ -468,4 +483,39 @@ std::string BigInteger::toString() const
     }
 
     return out.str();
+}
+
+BigInteger::operator int() const
+{
+    if (sign_value == BigInteger::Sign::ZERO) {
+        return 0;
+    }
+
+    if (value.size() > 1){
+        throw UnsupportedValue();
+    }
+    int number;
+    number = value[1];
+    if(sign_value == BigInteger::Sign::ZERO){
+        return number*= -1;
+    }
+}
+
+BigInteger::operator bool() const{
+    return sign_value == BigInteger::Sign::ZERO;
+}
+
+std::ostream &operator<<(std::ostream &out, const BigInteger &number)
+{
+    out << number.toString();
+    return out;
+}
+
+std::istream &operator>>(std::istream &in, BigInteger &number)
+{
+    std::string buffer;
+    in >> buffer;
+
+    number = BigInteger(buffer);
+    return in;
 }
